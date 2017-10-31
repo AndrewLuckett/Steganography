@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -18,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import core.BytesStreamsAndFiles;
+import core.Steg;
 import window.Content;
 
 public class CreateContent extends Content {
@@ -38,8 +38,6 @@ public class CreateContent extends Content {
     byte[] dat;
 
     JFileChooser fc = new JFileChooser();
-
-    int infobytes = 3;
 
     @Override
     protected void create() {
@@ -115,8 +113,8 @@ public class CreateContent extends Content {
         error.setText("");
 
         if (dat != null && img != null) {
-            if (dat.length < Math.pow(2, infobytes)) {
-                if (dat.length - infobytes <= img.getHeight() * img.getWidth()) {
+            if (dat.length < Math.pow(2, Steg.infobytes * 8)) {
+                if (dat.length - Steg.infobytes <= img.getHeight() * img.getWidth()) {
                     save.setEnabled(true);
                 } else {
                     error.setText("Data file too big for image");
@@ -136,20 +134,7 @@ public class CreateContent extends Content {
                 file = new File(file.getAbsolutePath() + ".png");
             }
 
-            BufferedImage out = img;
-
-            byte[] res = ByteBuffer.allocate(infobytes * 2).putInt(dat.length).array();
-
-            for (int i = 0; i <= infobytes; i++) {
-                out.setRGB(i, 0, adddattorgb(res[i], out.getRGB(0, 0)));
-            }
-
-            for (int i = infobytes; i <= dat.length; i++) {
-                int y = Math.floorDiv(i, img.getWidth());
-                int x = Math.floorMod(i, img.getWidth());
-
-                out.setRGB(x, y, adddattorgb(dat[i - infobytes], out.getRGB(x, y)));
-            }
+            BufferedImage out = Steg.generate(img, dat);
 
             try {
 
@@ -161,20 +146,6 @@ public class CreateContent extends Content {
 
             error.setText("Done");
         }
-    }
-
-    private int adddattorgb(byte dat, int rgb) {
-        String rgbdat = Integer.toBinaryString(rgb);
-        System.out.print(rgbdat);
-        String data = String.format("%8s", Integer.toBinaryString(dat & 0xFF)).replace(' ', '0');
-
-        rgbdat = rgbdat.substring(0, rgbdat.length() - 3) + data.substring(5);
-        rgbdat = rgbdat.substring(0, rgbdat.length() - 11) + data.substring(3, 5) + rgbdat.substring(rgbdat.length() - 9);
-        rgbdat = rgbdat.substring(0, rgbdat.length() - 19) + data.substring(0, 3) + rgbdat.substring(rgbdat.length() - 16);
-
-        System.out.println("  " + rgbdat);
-
-        return Integer.parseInt(rgbdat, 2); // fails on images with alpha
     }
 
     private void setupButton(JButton button) {
