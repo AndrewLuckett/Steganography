@@ -20,11 +20,10 @@ public class Steg {
 
         BufferedImage out = img;
 
-        byte[] res = ByteBuffer.allocate(infobytes * 2).putInt(dat.length).array();
+        byte[] res = ByteBuffer.allocate(infobytes * 2).putInt(dat.length).array(); // I'm not sure how many to allocate
 
         for (int i = 0; i < infobytes; i++) {
             out.setRGB(i, 0, adddattorgb(res[i], img.getRGB(0, 0)));
-            // System.out.println("ting");
         }
 
         for (int i = infobytes; i <= dat.length; i++) {
@@ -43,10 +42,6 @@ public class Steg {
 
         String out = "";
 
-        // System.out.println(data);
-
-        // System.out.println(rgbdat);
-
         if (rgbdat.length() < 24) {
             String pad = "";
             for (int i = 0; i < 24 - rgbdat.length(); i++) {
@@ -55,20 +50,14 @@ public class Steg {
 
             rgbdat = pad + rgbdat;
         }
-
         if (rgbdat.length() > 24) {
             out += rgbdat.substring(0, rgbdat.length() - 24);
             rgbdat = rgbdat.substring(rgbdat.length() - 24);
         }
 
-        // System.out.println(rgbdat);
-
         out += rgbdat.substring(0, 5) + data.substring(0, 3) +
             rgbdat.substring(8, 14) + data.substring(3, 5) +
             rgbdat.substring(16, 21) + data.substring(5);
-
-        // System.out.println(out);
-        // System.out.println("---");
 
         return (int) Long.parseLong(out, 2);
     }
