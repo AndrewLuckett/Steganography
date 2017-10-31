@@ -2,7 +2,6 @@ package core;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -54,12 +53,12 @@ public class BytesStreamsAndFiles {
      * Write a byte array to the given file.
      * Writing binary data is significantly simpler than reading it.
      */
-    public static void write(byte[] input, String outputFileName) {
+    public static void write(byte[] input, File file) {
         Main.log("Writing binary file...");
         try {
             OutputStream output = null;
             try {
-                output = new BufferedOutputStream(new FileOutputStream(outputFileName));
+                output = new BufferedOutputStream(new FileOutputStream(file));
                 output.write(input);
             } finally {
                 output.close();
@@ -69,52 +68,5 @@ public class BytesStreamsAndFiles {
         } catch (IOException ex) {
             Main.log(ex);
         }
-    }
-
-    /** Read the given binary file, and return its contents as a byte array. */
-    public static byte[] readAlternateImpl(String aInputFileName) {
-        Main.log("Reading in binary file named : " + aInputFileName);
-        File file = new File(aInputFileName);
-        Main.log("File size: " + file.length());
-        byte[] result = null;
-        try {
-            InputStream input = new BufferedInputStream(new FileInputStream(file));
-            result = readAndClose(input);
-        } catch (FileNotFoundException ex) {
-            Main.log(ex);
-        }
-        return result;
-    }
-
-    /**
-     * Read an input stream, and return it as a byte array.
-     * Sometimes the source of bytes is an input stream instead of a file.
-     * This implementation closes aInput after it's read.
-     */
-    public static byte[] readAndClose(InputStream aInput) {
-        // carries the data from input to output :
-        byte[] bucket = new byte[32 * 1024];
-        ByteArrayOutputStream result = null;
-        try {
-            try {
-                // Use buffering? No. Buffering avoids costly access to disk or network;
-                // buffering to an in-memory stream makes no sense.
-                result = new ByteArrayOutputStream(bucket.length);
-                int bytesRead = 0;
-                while (bytesRead != -1) {
-                    // aInput.read() returns -1, 0, or more :
-                    bytesRead = aInput.read(bucket);
-                    if (bytesRead > 0) {
-                        result.write(bucket, 0, bytesRead);
-                    }
-                }
-            } finally {
-                aInput.close();
-                // result.close(); this is a no-operation for ByteArrayOutputStream
-            }
-        } catch (IOException ex) {
-            Main.log(ex);
-        }
-        return result.toByteArray();
     }
 }

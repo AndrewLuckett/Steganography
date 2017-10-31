@@ -8,12 +8,12 @@ public class Steg {
      * One dat byte fits in a single pixel
      * infobytes describes how many bytes at the start of the image hold the data for the number of dat bytes
      * infobytes should remain the same throughout any usage of the program
-     * if info bytes is 3 then there are 24 bits of data for the how many pixels are used for dat
-     * 24 bits allows for max int = 8388607, the max number of data bytes (8.3GiB)
-     * it would take an image with at least 8388610 pixels to contain this (2113*3970)
+     * if info bytes is 4 then there are 32 bits of data for the how many pixels are used for dat
+     * 32 bits allows for max int = 2147483647 which would be the max number of data bytes (2.14GB)
+     * it would take an image with at least 2147483651 pixels to contain this
      */
 
-    public static final int infobytes = 3;
+    public static final int infobytes = 4;
 
     public static BufferedImage generate(BufferedImage img, byte[] dat) {
         // BufferedImage out = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
@@ -26,7 +26,7 @@ public class Steg {
             out.setRGB(i, 0, adddattorgb(res[i], img.getRGB(0, 0)));
         }
 
-        for (int i = infobytes; i <= dat.length; i++) {
+        for (int i = infobytes; i < dat.length + infobytes; i++) {
             int y = Math.floorDiv(i, img.getWidth());
             int x = Math.floorMod(i, img.getWidth());
 
@@ -63,6 +63,44 @@ public class Steg {
     }
 
     public static byte[] retrieve(BufferedImage img) {
-        return null;
+
+        byte[] res = new byte[infobytes];
+
+        for (int i = 0; i < infobytes; i++) {
+            res[i] = getfromrgb(img.getRGB(i, 0));
+        }
+        int bytecount = (ByteBuffer.wrap(res)).getInt();
+
+        byte[] dat = new byte[bytecount];
+
+        for (int i = infobytes; i < bytecount + infobytes; i++) {
+            int y = Math.floorDiv(i, img.getWidth());
+            int x = Math.floorMod(i, img.getWidth());
+
+            dat[i - infobytes] = getfromrgb(img.getRGB(x, y));
+        }
+
+        return dat;
     }
+
+    private static byte getfromrgb(int rgb) {
+        String rgbdat = Integer.toBinaryString(rgb);
+
+        if (rgbdat.length() < 24) {
+            String pad = "";
+            for (int i = 0; i < 24 - rgbdat.length(); i++) {
+                pad += "0";
+            }
+
+            rgbdat = pad + rgbdat;
+        }
+        if (rgbdat.length() > 24) {
+            rgbdat = rgbdat.substring(rgbdat.length() - 24);
+        }
+
+        rgbdat = rgbdat.substring(5, 8) + rgbdat.substring(14, 16) + rgbdat.substring(21);
+
+        return (byte) Integer.parseInt(rgbdat, 2);
+    }
+
 }

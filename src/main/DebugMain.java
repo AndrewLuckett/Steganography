@@ -20,7 +20,14 @@ public class DebugMain {
 
             ImageIO.write(out, "png", new File("C:/Users/Andrew/stegtestimg.png"));
 
-            System.out.println("done");
+            System.out.println("donea");
+
+            byte[] rec = Steg.retrieve(out);
+
+            BytesStreamsAndFiles.write(rec, new File("C:/Users/Andrew/stegtestrecovered"));
+
+            System.out.println("doneb");
+
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
