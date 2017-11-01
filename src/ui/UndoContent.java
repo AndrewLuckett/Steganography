@@ -93,7 +93,12 @@ public class UndoContent extends Content {
 
             byte[] out = Steg.retrieve(img);
 
-            BytesStreamsAndFiles.write(out, file);
+            try {
+                BytesStreamsAndFiles.write(out, file);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
 
             error.setText("Done");
         }

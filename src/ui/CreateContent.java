@@ -102,7 +102,12 @@ public class CreateContent extends Content {
         int returnVal = fc.showOpenDialog(CreateContent.this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
-            dat = BytesStreamsAndFiles.read(file);
+            try {
+                dat = BytesStreamsAndFiles.read(file);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
 
             checkifavailable();
         }
