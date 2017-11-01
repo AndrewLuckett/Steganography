@@ -23,14 +23,14 @@ public class HomeContent extends Content {
         create.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                windowFrame.setContent(new CreateContent());
+                windowFrame.setContent(new CreateContent(HomeContent.this));
             }
         });
 
         retrieve.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                windowFrame.setContent(new UndoContent());
+                windowFrame.setContent(new UndoContent(HomeContent.this));
             }
         });
 

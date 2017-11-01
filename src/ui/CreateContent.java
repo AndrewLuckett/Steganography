@@ -1,7 +1,6 @@
 package ui;
 
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,7 +19,7 @@ import core.BytesStreamsAndFiles;
 import core.Steg;
 import window.Content;
 
-public class CreateContent extends Content {
+public class CreateContent extends StegTemplateContent {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,6 +30,7 @@ public class CreateContent extends Content {
     JButton openimg = new JButton("Open Image");
     JButton opendat = new JButton("Open Data");
     JButton save = new JButton("Save image");
+    JButton back = new JButton("Back");
 
     JLabel error = new JLabel();
 
@@ -39,16 +39,22 @@ public class CreateContent extends Content {
 
     JFileChooser fc = new JFileChooser();
 
+    public CreateContent(Content previous) {
+        super(previous);
+    }
+
     @Override
     protected void create() {
         setLayout(new BorderLayout());
 
         add(buttonPanel, BorderLayout.NORTH);
+        add(infoPanel);
         add(errorPanel, BorderLayout.SOUTH);
 
-        setupButton(openimg);
-        setupButton(opendat);
-        setupButton(save);
+        setupButton(openimg, buttonPanel);
+        setupButton(opendat, buttonPanel);
+        setupButton(save, buttonPanel);
+        setupButton(back, infoPanel);
         save.setEnabled(false);
 
         errorPanel.add(error);
@@ -72,6 +78,13 @@ public class CreateContent extends Content {
             @Override
             public void actionPerformed(ActionEvent e) {
                 saveData();
+            }
+        });
+
+        back.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                windowFrame.setContent(previouspane);
             }
         });
 
@@ -153,21 +166,4 @@ public class CreateContent extends Content {
         }
     }
 
-    private void setupButton(JButton button) {
-        button.setFocusPainted(false);
-        button.setContentAreaFilled(false);
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        buttonPanel.add(button);
-    }
-
-    private String getExtension(File f) {
-        String ext = null;
-        String s = f.getName();
-        int i = s.lastIndexOf('.');
-
-        if (i > 0 && i < s.length() - 1) {
-            ext = s.substring(i + 1).toLowerCase();
-        }
-        return ext;
-    }
 }
