@@ -23,12 +23,12 @@ public class Main {
     }
 
     public static void log(Object dat) {
-        System.out.println(dat);
+        log(dat, 5);
     }
 
     public static void log(Object dat, int lvl) {
         if (lvl >= loglvl) {
-            log(dat);
+            System.out.println(dat);
         }
     }
 
