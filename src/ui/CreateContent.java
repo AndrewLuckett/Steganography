@@ -115,14 +115,16 @@ public class CreateContent extends StegTemplateContent {
         int returnVal = fc.showOpenDialog(CreateContent.this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
-            try {
-                dat = BytesStreamsAndFiles.read(file);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
 
-            checkifavailable();
+            if (isdatasizevalid(file.length())) {
+                try {
+                    dat = BytesStreamsAndFiles.read(file);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                checkifavailable();
+            }
         }
     }
 
@@ -131,16 +133,20 @@ public class CreateContent extends StegTemplateContent {
         error.setText("");
 
         if (dat != null && img != null) {
-            if (dat.length < Math.pow(2, Steg.infobytes * 8)) {
-                if (dat.length - Steg.infobytes <= img.getHeight() * img.getWidth()) {
-                    save.setEnabled(true);
-                } else {
-                    error.setText("Data file too big for image");
-                }
+            if (dat.length - Steg.infobytes <= img.getHeight() * img.getWidth()) {
+                save.setEnabled(true);
             } else {
-                error.setText("Data beyond supported size");
+                error.setText("Data file too big for image");
             }
         }
+    }
+
+    private boolean isdatasizevalid(long size) {
+        if (size >= Math.pow(2, Steg.infobytes * 8 - 1) - 1) {
+            error.setText("Data beyond supported size");
+            return false;
+        }
+        return true;
     }
 
     private void saveData() {
@@ -165,5 +171,4 @@ public class CreateContent extends StegTemplateContent {
             error.setText("Done");
         }
     }
-
 }
