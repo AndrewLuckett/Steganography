@@ -1,13 +1,8 @@
 package core;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.nio.file.Files;
 
 import main.Main;
 
@@ -17,16 +12,11 @@ public class BytesStreamsAndFiles {
      * Read the given binary file, and return its contents as a byte array.
      */
     public static byte[] read(File file) throws IOException {
-        byte[] result = new byte[(int) file.length()];
+        Main.log(file.length());
 
-        InputStream input = new BufferedInputStream(new FileInputStream(file));
+        byte[] result = Files.readAllBytes(file.toPath());
 
-        for (int i = 0; i < file.length(); i++) {
-            result[i] = (byte) input.read();
-        }
-
-        Main.log("Closing input stream.");
-        input.close();
+        Main.log("Read");
 
         return result;
     }
@@ -38,9 +28,8 @@ public class BytesStreamsAndFiles {
     public static void write(byte[] input, File file) throws IOException {
         Main.log("Writing binary file...");
 
-        OutputStream output = new BufferedOutputStream(new FileOutputStream(file));
-        output.write(input);
-        output.close();
+        Files.write(file.toPath(), input);
+        Main.log("Written");
 
     }
 }
