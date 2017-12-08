@@ -1,6 +1,8 @@
 package ui;
 
 import java.awt.Cursor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.JButton;
@@ -21,8 +23,17 @@ public abstract class StegTemplateContent extends Content {
 
     StegAlgoInterface algo = new Steg();
 
+    JButton back = new JButton("Back");
+
     public StegTemplateContent(Content previous) {
         previouspane = previous;
+
+        back.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                windowFrame.setContent(previouspane);
+            }
+        });
     }
 
     protected void setupButton(JButton button, JPanel element) {

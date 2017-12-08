@@ -29,7 +29,6 @@ public class CreateContent extends StegTemplateContent {
     JButton openimg = new JButton("Open Image");
     JButton opendat = new JButton("Open Data");
     JButton save = new JButton("Save image");
-    JButton back = new JButton("Back");
 
     JLabel error = new JLabel();
 
@@ -75,13 +74,6 @@ public class CreateContent extends StegTemplateContent {
             @Override
             public void actionPerformed(ActionEvent e) {
                 saveData();
-            }
-        });
-
-        back.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                windowFrame.setContent(previouspane);
             }
         });
 
