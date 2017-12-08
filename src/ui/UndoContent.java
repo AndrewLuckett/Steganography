@@ -15,7 +15,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import core.BytesStreamsAndFiles;
-import core.Steg;
 import window.Content;
 
 public class UndoContent extends StegTemplateContent {
@@ -33,8 +32,6 @@ public class UndoContent extends StegTemplateContent {
     JLabel error = new JLabel();
 
     BufferedImage img;
-
-    JFileChooser fc = new JFileChooser();
 
     public UndoContent(Content previous) {
         super(previous);
@@ -105,7 +102,7 @@ public class UndoContent extends StegTemplateContent {
                 file = new File(file.getAbsolutePath() + ".png");
             }
 
-            byte[] out = Steg.retrieve(img);
+            byte[] out = algo.retrieve(img);
 
             try {
                 BytesStreamsAndFiles.write(out, file);

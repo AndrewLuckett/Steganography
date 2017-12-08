@@ -12,7 +12,11 @@ public class MinSteg implements StegAlgoInterface {
         return null;
     }
 
-    public boolean isWorkable(BufferedImage img, byte[] dat) {
+    public boolean isWorkable(BufferedImage img, int datlength) {
+        return false;
+    }
+
+    public boolean isDataWithinSupportedSize(long datlength) {
         return false;
     }
 }

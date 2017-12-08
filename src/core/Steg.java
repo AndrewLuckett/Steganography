@@ -3,7 +3,7 @@ package core;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 
-public class Steg {
+public class Steg implements StegAlgoInterface {
     /*
      * One dat byte fits in a single pixel
      * infobytes describes how many bytes at the start of the image hold the data for the number of dat bytes
@@ -15,7 +15,7 @@ public class Steg {
 
     public static final int infobytes = 4;
 
-    public static BufferedImage generate(BufferedImage img, byte[] dat) {
+    public BufferedImage generate(BufferedImage img, byte[] dat) {
         // BufferedImage out = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
 
         BufferedImage out = img;
@@ -36,7 +36,7 @@ public class Steg {
         return out;
     }
 
-    private static int adddattorgb(byte dat, int rgb) {
+    private int adddattorgb(byte dat, int rgb) {
         String rgbdat = Integer.toBinaryString(rgb);
         String data = String.format("%8s", Integer.toBinaryString(dat & 0xFF)).replace(' ', '0');
 
@@ -62,7 +62,7 @@ public class Steg {
         return (int) Long.parseLong(out, 2);
     }
 
-    public static byte[] retrieve(BufferedImage img) {
+    public byte[] retrieve(BufferedImage img) {
 
         byte[] res = new byte[infobytes];
 
@@ -83,7 +83,7 @@ public class Steg {
         return dat;
     }
 
-    private static byte getfromrgb(int rgb) {
+    private byte getfromrgb(int rgb) {
         String rgbdat = Integer.toBinaryString(rgb);
 
         if (rgbdat.length() < 24) {
@@ -101,6 +101,14 @@ public class Steg {
         rgbdat = rgbdat.substring(5, 8) + rgbdat.substring(14, 16) + rgbdat.substring(21);
 
         return (byte) Integer.parseInt(rgbdat, 2);
+    }
+
+    public boolean isWorkable(BufferedImage img, int datlength) {
+        return datlength < img.getHeight() * img.getWidth() - 4;
+    }
+
+    public boolean isDataWithinSupportedSize(long datlength) {
+        return datlength < Math.pow(2, 32) - 1;
     }
 
 }

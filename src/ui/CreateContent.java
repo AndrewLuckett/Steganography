@@ -16,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import core.BytesStreamsAndFiles;
-import core.Steg;
 import window.Content;
 
 public class CreateContent extends StegTemplateContent {
@@ -36,8 +35,6 @@ public class CreateContent extends StegTemplateContent {
 
     BufferedImage img;
     byte[] dat;
-
-    JFileChooser fc = new JFileChooser();
 
     public CreateContent(Content previous) {
         super(previous);
@@ -116,7 +113,7 @@ public class CreateContent extends StegTemplateContent {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
 
-            if (isdatasizevalid(file.length())) {
+            if (algo.isDataWithinSupportedSize(file.length())) {
                 try {
                     dat = BytesStreamsAndFiles.read(file);
                 } catch (IOException e) {
@@ -133,20 +130,12 @@ public class CreateContent extends StegTemplateContent {
         error.setText("");
 
         if (dat != null && img != null) {
-            if (dat.length - Steg.infobytes <= img.getHeight() * img.getWidth()) {
+            if (algo.isWorkable(img, dat.length)) {
                 save.setEnabled(true);
             } else {
                 error.setText("Data file too big for image");
             }
         }
-    }
-
-    private boolean isdatasizevalid(long size) {
-        if (size >= Math.pow(2, Steg.infobytes * 8 - 1) - 1) {
-            error.setText("Data beyond supported size");
-            return false;
-        }
-        return true;
     }
 
     private void saveData() {
@@ -158,7 +147,7 @@ public class CreateContent extends StegTemplateContent {
                 file = new File(file.getAbsolutePath() + ".png");
             }
 
-            BufferedImage out = Steg.generate(img, dat);
+            BufferedImage out = algo.generate(img, dat);
 
             try {
 

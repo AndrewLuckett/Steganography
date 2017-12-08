@@ -4,8 +4,11 @@ import java.awt.Cursor;
 import java.io.File;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
+import core.Steg;
+import core.StegAlgoInterface;
 import window.Content;
 
 public abstract class StegTemplateContent extends Content {
@@ -13,6 +16,10 @@ public abstract class StegTemplateContent extends Content {
     private static final long serialVersionUID = 1L;
 
     protected Content previouspane;
+
+    JFileChooser fc = new JFileChooser();
+
+    StegAlgoInterface algo = new Steg();
 
     public StegTemplateContent(Content previous) {
         previouspane = previous;
