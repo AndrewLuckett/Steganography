@@ -15,7 +15,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import core.BytesStreamsAndFiles;
-import core.Steg;
 import window.Content;
 
 public class UndoContent extends StegTemplateContent {
@@ -28,13 +27,10 @@ public class UndoContent extends StegTemplateContent {
 
     JButton opendat = new JButton("Open Image");
     JButton save = new JButton("Save Data");
-    JButton back = new JButton("Back");
 
     JLabel error = new JLabel();
 
     BufferedImage img;
-
-    JFileChooser fc = new JFileChooser();
 
     public UndoContent(Content previous) {
         super(previous);
@@ -43,6 +39,8 @@ public class UndoContent extends StegTemplateContent {
 
     @Override
     protected void create() {
+        setLayout(new BorderLayout());
+
         add(buttonPanel, BorderLayout.NORTH);
         add(infoPanel);
         add(errorPanel, BorderLayout.SOUTH);
@@ -63,13 +61,6 @@ public class UndoContent extends StegTemplateContent {
             @Override
             public void actionPerformed(ActionEvent e) {
                 saveData();
-            }
-        });
-
-        back.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                windowFrame.setContent(previouspane);
             }
         });
 
@@ -105,7 +96,7 @@ public class UndoContent extends StegTemplateContent {
                 file = new File(file.getAbsolutePath() + ".png");
             }
 
-            byte[] out = Steg.retrieve(img);
+            byte[] out = algo.retrieve(img);
 
             try {
                 BytesStreamsAndFiles.write(out, file);

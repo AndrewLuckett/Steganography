@@ -8,6 +8,7 @@ import javax.imageio.ImageIO;
 
 import core.BytesStreamsAndFiles;
 import core.Steg;
+import core.StegAlgoInterface;
 
 public class DebugMain {
 
@@ -16,13 +17,15 @@ public class DebugMain {
             BufferedImage img = ImageIO.read(new File("C:/Users/Andrew/Pictures/stegin.png"));
             byte[] dat = BytesStreamsAndFiles.read(new File("C:/Users/Andrew/Pictures/Folder.jpg"));
 
-            BufferedImage out = Steg.generate(img, dat);
+            StegAlgoInterface algo = new Steg();
+
+            BufferedImage out = algo.generate(img, dat);
 
             ImageIO.write(out, "png", new File("C:/Users/Andrew/stegtestimg.png"));
 
             System.out.println("donea");
 
-            byte[] rec = Steg.retrieve(out);
+            byte[] rec = algo.retrieve(out);
 
             BytesStreamsAndFiles.write(rec, new File("C:/Users/Andrew/stegtestrecovered"));
 
@@ -34,5 +37,4 @@ public class DebugMain {
         }
 
     }
-
 }

@@ -16,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import core.BytesStreamsAndFiles;
-import core.Steg;
 import window.Content;
 
 public class CreateContent extends StegTemplateContent {
@@ -30,14 +29,11 @@ public class CreateContent extends StegTemplateContent {
     JButton openimg = new JButton("Open Image");
     JButton opendat = new JButton("Open Data");
     JButton save = new JButton("Save image");
-    JButton back = new JButton("Back");
 
     JLabel error = new JLabel();
 
     BufferedImage img;
     byte[] dat;
-
-    JFileChooser fc = new JFileChooser();
 
     public CreateContent(Content previous) {
         super(previous);
@@ -51,6 +47,7 @@ public class CreateContent extends StegTemplateContent {
         add(infoPanel);
         add(errorPanel, BorderLayout.SOUTH);
 
+        buttonPanel.add(algolist);
         setupButton(openimg, buttonPanel);
         setupButton(opendat, buttonPanel);
         setupButton(save, buttonPanel);
@@ -81,10 +78,14 @@ public class CreateContent extends StegTemplateContent {
             }
         });
 
-        back.addActionListener(new ActionListener() {
+        for (ActionListener A : algolist.getActionListeners()) {
+            algolist.removeActionListener(A);
+        }
+        algolist.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                windowFrame.setContent(previouspane);
+                setalgotolistselection();
+                checkifavailable();
             }
         });
 
@@ -103,11 +104,11 @@ public class CreateContent extends StegTemplateContent {
                     eg.printStackTrace();
                 }
 
+                checkifavailable();
+
             } else {
                 error.setText("Image needs to be a .png");
             }
-
-            checkifavailable();
         }
     }
 
@@ -116,7 +117,7 @@ public class CreateContent extends StegTemplateContent {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
 
-            if (isdatasizevalid(file.length())) {
+            if (algo.isDataWithinSupportedSize(file.length())) {
                 try {
                     dat = BytesStreamsAndFiles.read(file);
                 } catch (IOException e) {
@@ -124,6 +125,8 @@ public class CreateContent extends StegTemplateContent {
                     e.printStackTrace();
                 }
                 checkifavailable();
+            } else {
+                error.setText("Data file bigger than supported size");
             }
         }
     }
@@ -133,20 +136,16 @@ public class CreateContent extends StegTemplateContent {
         error.setText("");
 
         if (dat != null && img != null) {
-            if (dat.length - Steg.infobytes <= img.getHeight() * img.getWidth()) {
-                save.setEnabled(true);
+            if (algo.isDataWithinSupportedSize(dat.length)) { // For when algo is changed after dat
+                if (algo.isWorkable(img, dat.length)) {
+                    save.setEnabled(true);
+                } else {
+                    error.setText("Data file too big for image");
+                }
             } else {
-                error.setText("Data file too big for image");
+                error.setText("Data file bigger than supported size");
             }
         }
-    }
-
-    private boolean isdatasizevalid(long size) {
-        if (size >= Math.pow(2, Steg.infobytes * 8 - 1) - 1) {
-            error.setText("Data beyond supported size");
-            return false;
-        }
-        return true;
     }
 
     private void saveData() {
@@ -158,7 +157,7 @@ public class CreateContent extends StegTemplateContent {
                 file = new File(file.getAbsolutePath() + ".png");
             }
 
-            BufferedImage out = Steg.generate(img, dat);
+            BufferedImage out = algo.generate(img, dat);
 
             try {
 
