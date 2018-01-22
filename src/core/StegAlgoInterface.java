@@ -8,7 +8,9 @@ public interface StegAlgoInterface {
 
     public byte[] retrieve(BufferedImage img);
 
-    public boolean isDataWithinSupportedSize(long datlength);
+    public default boolean isDataWithinSupportedSize(long datlength) {
+        return datlength < Math.pow(2, 32) - 1;
+    };
 
     public boolean isWorkable(BufferedImage img, int datlength);
 }

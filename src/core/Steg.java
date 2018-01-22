@@ -106,9 +106,4 @@ public class Steg implements StegAlgoInterface {
     public boolean isWorkable(BufferedImage img, int datlength) {
         return datlength < img.getHeight() * img.getWidth() - 4;
     }
-
-    public boolean isDataWithinSupportedSize(long datlength) {
-        return datlength < Math.pow(2, 32) - 1;
-    }
-
 }

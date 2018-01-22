@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 public class MinSteg implements StegAlgoInterface {
 
     public BufferedImage generate(BufferedImage img, byte[] dat) {
-        return img;
+        return null;
     }
 
     public byte[] retrieve(BufferedImage img) {
@@ -13,10 +13,6 @@ public class MinSteg implements StegAlgoInterface {
     }
 
     public boolean isWorkable(BufferedImage img, int datlength) {
-        return false;
-    }
-
-    public boolean isDataWithinSupportedSize(long datlength) {
         return false;
     }
 }

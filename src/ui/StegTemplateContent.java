@@ -6,9 +6,11 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 
+import core.MinSteg;
 import core.Steg;
 import core.StegAlgoInterface;
 import window.Content;
@@ -17,13 +19,17 @@ public abstract class StegTemplateContent extends Content {
 
     private static final long serialVersionUID = 1L;
 
-    protected Content previouspane;
+    Content previouspane;
 
     JFileChooser fc = new JFileChooser();
 
     StegAlgoInterface algo = new Steg();
 
     JButton back = new JButton("Back");
+
+    String[] algos = { "Basic", "MySteg" };
+
+    JComboBox<String> algolist = new JComboBox<String>(algos);
 
     public StegTemplateContent(Content previous) {
         previouspane = previous;
@@ -34,6 +40,29 @@ public abstract class StegTemplateContent extends Content {
                 windowFrame.setContent(previouspane);
             }
         });
+
+        algolist.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setalgotolistselection();
+            }
+        });
+
+    }
+
+    public void setalgotolistselection() {
+        switch ((String) algolist.getSelectedItem()) {
+            case "MySteg":
+                setalgo(new MinSteg());
+                break;
+            default:
+                setalgo(new Steg());
+                break;
+        }
+    }
+
+    public void setalgo(StegAlgoInterface algo) {
+        this.algo = algo;
     }
 
     protected void setupButton(JButton button, JPanel element) {

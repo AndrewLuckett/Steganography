@@ -47,6 +47,7 @@ public class CreateContent extends StegTemplateContent {
         add(infoPanel);
         add(errorPanel, BorderLayout.SOUTH);
 
+        buttonPanel.add(algolist);
         setupButton(openimg, buttonPanel);
         setupButton(opendat, buttonPanel);
         setupButton(save, buttonPanel);
@@ -77,6 +78,17 @@ public class CreateContent extends StegTemplateContent {
             }
         });
 
+        for (ActionListener A : algolist.getActionListeners()) {
+            algolist.removeActionListener(A);
+        }
+        algolist.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setalgotolistselection();
+                checkifavailable();
+            }
+        });
+
         windowFrame.pack();
         windowFrame.setSize(new Dimension(440, 230));
     }
@@ -92,11 +104,11 @@ public class CreateContent extends StegTemplateContent {
                     eg.printStackTrace();
                 }
 
+                checkifavailable();
+
             } else {
                 error.setText("Image needs to be a .png");
             }
-
-            checkifavailable();
         }
     }
 
@@ -113,6 +125,8 @@ public class CreateContent extends StegTemplateContent {
                     e.printStackTrace();
                 }
                 checkifavailable();
+            } else {
+                error.setText("Data file bigger than supported size");
             }
         }
     }
@@ -122,10 +136,14 @@ public class CreateContent extends StegTemplateContent {
         error.setText("");
 
         if (dat != null && img != null) {
-            if (algo.isWorkable(img, dat.length)) {
-                save.setEnabled(true);
+            if (algo.isDataWithinSupportedSize(dat.length)) { // For when algo is changed after dat
+                if (algo.isWorkable(img, dat.length)) {
+                    save.setEnabled(true);
+                } else {
+                    error.setText("Data file too big for image");
+                }
             } else {
-                error.setText("Data file too big for image");
+                error.setText("Data file bigger than supported size");
             }
         }
     }
