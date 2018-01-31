@@ -97,18 +97,16 @@ public class CreateContent extends StegTemplateContent {
         int returnVal = fc.showOpenDialog(CreateContent.this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
-            if (getExtension(file).equals("png")) {
-                try {
-                    img = ImageIO.read(file);
-                } catch (IOException eg) {
-                    eg.printStackTrace();
-                }
-
-                checkifavailable();
-
-            } else {
-                error.setText("Image needs to be a .png");
+            try {
+                img = ImageIO.read(file);
+            } catch (IOException eg) {
+                error.setText("Invalid image file");
+                img = null;
+                eg.printStackTrace();
             }
+
+            checkifavailable();
+
         }
     }
 

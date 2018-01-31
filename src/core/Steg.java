@@ -23,7 +23,7 @@ public class Steg implements StegAlgoInterface {
         byte[] res = ByteBuffer.allocate(infobytes * 2).putInt(dat.length).array(); // I'm not sure how many to allocate
 
         for (int i = 0; i < infobytes; i++) {
-            out.setRGB(i, 0, adddattorgb(res[i], img.getRGB(0, 0)));
+            out.setRGB(i, 0, adddattorgb(res[i], img.getRGB(i, 0)));
         }
 
         for (int i = infobytes; i < dat.length + infobytes; i++) {
