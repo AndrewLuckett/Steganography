@@ -36,7 +36,7 @@ public class Steg implements StegAlgoInterface {
         return out;
     }
 
-    private int adddattorgb(byte dat, int rgb) {
+    public int adddattorgb(byte dat, int rgb) {
         String rgbdat = Integer.toBinaryString(rgb);
         String data = String.format("%8s", Integer.toBinaryString(dat & 0xFF)).replace(' ', '0');
 
@@ -83,7 +83,7 @@ public class Steg implements StegAlgoInterface {
         return dat;
     }
 
-    private byte getfromrgb(int rgb) {
+    public byte getfromrgb(int rgb) {
         String rgbdat = Integer.toBinaryString(rgb);
 
         if (rgbdat.length() < 24) {

@@ -1,6 +1,8 @@
 package core;
 
 import java.awt.image.BufferedImage;
+import java.nio.ByteBuffer;
+import java.util.Random;
 
 public class MinSteg implements StegAlgoInterface {
     /*
@@ -59,8 +61,37 @@ public class MinSteg implements StegAlgoInterface {
      *
      */
 
+    public static final int infobytes = 4;
+    private Steg steg = new Steg();
+
     public BufferedImage generate(BufferedImage img, byte[] dat) {
-        return null;
+        BufferedImage out = img;
+
+        byte[] res = ByteBuffer.allocate(infobytes * 2).putInt(dat.length).array();
+
+        for (int i = 0; i < infobytes; i++) {
+            out.setRGB(i, 0, steg.adddattorgb(res[i], img.getRGB(0, 0)));
+        }
+
+        int seed = new Random().nextInt();
+        res = ByteBuffer.allocate(infobytes * 2).putInt(seed).array(); // allocating the same for safety sake
+        for (int i = 0; i < 4; i++) {
+            out.setRGB(i, 1, steg.adddattorgb(res[i], img.getRGB(i, 1)));
+        }
+
+        Random rand = new Random(seed);
+        int validclusters = (img.getHeight() / 2) * (img.getWidth() / 2) - 2;
+
+        for (int i = 0; i < dat.length; i++) {
+            int depth = (int) (rand.nextDouble() * validclusters) + 2; // TODO : Check against duplicates
+            out = addDatToCluster(dat[i], new Cluster(img, depth)).addToImage(out, depth);
+        }
+
+        return out;
+    }
+
+    public Cluster addDatToCluster(byte dat, Cluster cluster) {
+        return cluster;
     }
 
     public byte[] retrieve(BufferedImage img) {
